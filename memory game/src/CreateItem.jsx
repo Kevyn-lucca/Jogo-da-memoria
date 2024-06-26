@@ -1,42 +1,88 @@
 import { useEffect, useState } from "react";
 import Item from "./ItemComponent";
 
-/*
-    Todos:
-    resolva o bug onde a api esta sendo chamada varias vezes
-    crie o objeto que tera a função de interação com o click
-    crie um array de objetos que e mostrado na pagina, que contem os objetos gerados.
-    crie a função que realiza o enbaralho dos itens com os itens já no array, sem realizar outra chamada de api
+class CardObject {
+	constructor(name, img) {
+		this.name = name;
+		this.img = img;
+		this.id = name + img;
+	}
 
-*/
+	static GenerateCard(name, img) {
+		return new CardObject(name, img);
+	}
+}
 
 function GetData() {
-	const [Imgdata, setImg] = useState(null);
-	const [NameData, setName] = useState(null);
+	const [objectArray, setObjectArray] = useState([]);
+	const [score, setScore] = useState(0);
+	const [maxScore, setMaxScore] = useState(0);
+	const [clicked, setClicked] = useState([]);
 
 	useEffect(() => {
-		const url = `http://gateway.marvel.com/v1/public/characters?limit=20&offset=${Math.floor(
-			Math.random() * 1000
-		)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`;
-		console.log(url);
 		const fetchData = async () => {
-			const response = await fetch(url);
-			const answer = await response.json();
-			const characters = answer.data.results[0];
-			const name = characters.name;
-			const img =
-				characters.thumbnail.path + "." + characters.thumbnail.extension;
-			setName(name);
-			setImg(img);
+			const response = await fetch(
+				`http://gateway.marvel.com/v1/public/characters?limit=40&offset=${Math.floor(
+					Math.random() * 5000
+				)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`
+			);
+
+			const data = await response.json();
+			const characters = data.data.results;
+			const fetchedData = characters
+				.map((character) => {
+					const name = character.name;
+					const img =
+						character.thumbnail.path + "." + character.thumbnail.extension;
+					return CardObject.GenerateCard(name, img);
+				})
+				.filter(
+					(card) =>
+						card.img !==
+							"http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" &&
+						card.img !==
+							"http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708.gif"
+				);
+			setObjectArray(fetchedData);
 		};
 
 		fetchData();
 	}, []);
 
+	const shuffleArray = (array) => {
+		const newArray = [...array];
+		for (let i = newArray.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+		}
+		return newArray;
+	};
+
+	function handleCardClick(cardId) {
+		if (clicked.find((card) => card === cardId)) {
+			setScore(0);
+		} else {
+			setScore(score + 1);
+			if (score >= maxScore) {
+				setMaxScore(score + 1);
+			}
+		}
+		setClicked((prevState) => [...prevState, cardId]);
+		setObjectArray(shuffleArray(objectArray));
+	}
+
 	return (
-		<>
-			<Item Name={NameData} img={Imgdata} />
-		</>
+		<div>
+			<div>
+				<p>Score: {score}</p>
+				<p>Max Score: {maxScore}</p>
+			</div>
+			{objectArray.map((card) => (
+				<button key={card.id} onClick={() => handleCardClick(card.id)}>
+					<Item name={card.name} img={card.img} />
+				</button>
+			))}
+		</div>
 	);
 }
 
