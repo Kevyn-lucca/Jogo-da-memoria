@@ -23,9 +23,10 @@ function GetData() {
 
 	async function fetchData() {
 		const response = await fetch(
-			`http://gateway.marvel.com/v1/public/characters?limit=30&offset=${Math.floor(
+			`https://gateway.marvel.com/v1/public/characters?limit=30&offset=${Math.floor(
 				Math.random() * 2000
-			)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`
+			)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`,
+			{ mode: "cors" }
 		);
 		const data = await response.json();
 		const characters = data.data.results;

@@ -1,13 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-	font-family: "BebasNeue-Regular";
-	src: url("public/BebasNeue-Regular.ttf") format("woff2");
-	font-weight: 400;
-	font-style: normal;
-}
 
 @keyframes shuffle {
 	0% {
