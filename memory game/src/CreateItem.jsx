@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Item from "./ItemComponent";
+import "./index.css";
 
 class CardObject {
 	constructor(name, img) {
@@ -18,15 +19,15 @@ function GetData() {
 	const [score, setScore] = useState(0);
 	const [maxScore, setMaxScore] = useState(0);
 	const [clicked, setClicked] = useState([]);
+	const [shuffling, setShuffling] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			const response = await fetch(
-				`http://gateway.marvel.com/v1/public/characters?limit=40&offset=${Math.floor(
-					Math.random() * 5000
+				`http://gateway.marvel.com/v1/public/characters?limit=30&offset=${Math.floor(
+					Math.random() * 2000
 				)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`
 			);
-
 			const data = await response.json();
 			const characters = data.data.results;
 			const fetchedData = characters
@@ -58,31 +59,51 @@ function GetData() {
 		return newArray;
 	};
 
-	function handleCardClick(cardId) {
-		if (clicked.find((card) => card === cardId)) {
+	const handleCardClick = (cardId) => {
+		if (clicked.includes(cardId)) {
 			setScore(0);
+			setClicked([]);
 		} else {
 			setScore(score + 1);
-			if (score >= maxScore) {
+			if (score + 1 > maxScore) {
 				setMaxScore(score + 1);
 			}
 		}
-		setClicked((prevState) => [...prevState, cardId]);
-		setObjectArray(shuffleArray(objectArray));
-	}
 
+		setClicked((prevClicked) => [...prevClicked, cardId]);
+
+		setShuffling(true);
+		setTimeout(() => {
+			setObjectArray(shuffleArray(objectArray));
+			setShuffling(false);
+		}, 500);
+	};
 	return (
-		<div>
-			<div>
-				<p>Score: {score}</p>
-				<p>Max Score: {maxScore}</p>
-			</div>
-			{objectArray.map((card) => (
-				<button key={card.id} onClick={() => handleCardClick(card.id)}>
-					<Item name={card.name} img={card.img} />
+		<>
+			<div className="flex justify-between items-center">
+				<button className="ml-4" onClick={() => window.location.reload()}>
+					New game
 				</button>
-			))}
-		</div>
+				<h1 className=" font-extrabold text-4xl">Heros Memory</h1>
+				<div className="gap-1 mr-3">
+					<p>Score: {score}</p>
+					<p>Max Score: {maxScore}</p>
+				</div>
+			</div>
+			<div className="grid grid-cols-6 gap-4 ml-5 mr-5">
+				{objectArray.map((card) => (
+					<button
+						className={`text-3xl font-bold ${
+							shuffling ? "shuffle-animation" : ""
+						}`}
+						key={card.id}
+						onClick={() => handleCardClick(card.id)}
+					>
+						<Item name={card.name} img={card.img} />
+					</button>
+				))}
+			</div>
+		</>
 	);
 }
 

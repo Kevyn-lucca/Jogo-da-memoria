@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 function Item({ name, img }) {
 	return (
 		<div
-			className="size-60"
+			className="size-60  relative border-4 border-black rounded-lg shadow-lg p-4 max-w-xs mx-auto mb-4"
 			style={{
 				backgroundImage: "url(" + `${img}` + ")",
 				backgroundPosition: "center",
@@ -11,7 +11,9 @@ function Item({ name, img }) {
 				backgroundRepeat: "no-repeat",
 			}}
 		>
-			<p>{name}</p>
+			<div className="absolute inset-0 text-transparent bg-black bg-opacity-0 hover:text-white hover:bg-opacity-50 transition">
+				<p className="relative text-center text-2xl pt-24 ">{name}</p>
+			</div>
 		</div>
 	);
 }
