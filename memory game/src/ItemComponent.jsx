@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 function Item({ name, img }) {
 	return (
 		<div
-			className="size-60  relative border-4 border-black rounded-lg shadow-lg p-4 max-w-xs mx-auto mb-4"
+			className="size-60 hover:-translate-y-3 relative border-4 border-black rounded-lg shadow-lg p-4 mx-auto mb-2"
 			style={{
 				backgroundImage: "url(" + `${img}` + ")",
 				backgroundPosition: "center",

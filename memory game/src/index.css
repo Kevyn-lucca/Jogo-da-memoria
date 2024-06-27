@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: "BebasNeue-Regular";
+	src: url("src/assets/BebasNeue-Regular.ttf") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+}
+
 @keyframes shuffle {
 	0% {
 		transform: rotateY(0deg);

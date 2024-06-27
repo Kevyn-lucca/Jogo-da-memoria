@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Item from "./ItemComponent";
+import PropTypes from "prop-types";
 import "./index.css";
 
 class CardObject {
@@ -14,41 +15,47 @@ class CardObject {
 	}
 }
 
-function GetData() {
+function GetData({ difficulty }) {
 	const [objectArray, setObjectArray] = useState([]);
 	const [score, setScore] = useState(0);
 	const [maxScore, setMaxScore] = useState(0);
 	const [clicked, setClicked] = useState([]);
 	const [shuffling, setShuffling] = useState(false);
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const response = await fetch(
-				`http://gateway.marvel.com/v1/public/characters?limit=30&offset=${Math.floor(
-					Math.random() * 2000
-				)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`
+	async function fetchData() {
+		const response = await fetch(
+			`http://gateway.marvel.com/v1/public/characters?limit=${difficulty}&offset=${Math.floor(
+				Math.random() * 2000
+			)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`
+		);
+		const data = await response.json();
+		const characters = data.data.results;
+		const fetchedData = characters
+			.map((character) => {
+				const name = character.name;
+				const img =
+					character.thumbnail.path + "." + character.thumbnail.extension;
+				return CardObject.GenerateCard(name, img);
+			})
+			.filter(
+				(card) =>
+					card.img !==
+						"http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" &&
+					card.img !==
+						"http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708.gif"
 			);
-			const data = await response.json();
-			const characters = data.data.results;
-			const fetchedData = characters
-				.map((character) => {
-					const name = character.name;
-					const img =
-						character.thumbnail.path + "." + character.thumbnail.extension;
-					return CardObject.GenerateCard(name, img);
-				})
-				.filter(
-					(card) =>
-						card.img !==
-							"http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg" &&
-						card.img !==
-							"http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c002e0305708.gif"
-				);
-			setObjectArray(fetchedData);
-		};
+		setObjectArray(fetchedData);
+	}
 
+	useEffect(() => {
 		fetchData();
-	}, []);
+	});
+
+	const ResetGame = () => {
+		setScore(0);
+		fetchData();
+		setClicked([]);
+	};
 
 	const shuffleArray = (array) => {
 		const newArray = [...array];
@@ -78,16 +85,31 @@ function GetData() {
 			setShuffling(false);
 		}, 500);
 	};
+
+	GetData.propTypes = {
+		difficulty: PropTypes.string.isRequired,
+	};
 	return (
 		<>
-			<div className="flex justify-between items-center">
-				<button className="ml-4" onClick={() => window.location.reload()}>
+			<div className="flex justify-between items-center border-b-4 border-black bg-gradient-to-r  from-sky-500 to-indigo-500 mb-4">
+				<button
+					className="ml-4 text-2xl active:brightness-200 bg-neutral-900 font-Bebas text-white p-1 rounded-md"
+					onClick={ResetGame}
+				>
 					New game
 				</button>
-				<h1 className=" font-extrabold text-4xl">Heros Memory</h1>
-				<div className="gap-1 mr-3">
-					<p>Score: {score}</p>
-					<p>Max Score: {maxScore}</p>
+				<div className=" bg-red-600 p-1 m-1 text-center text-white">
+					<h1 className=" font-Bebas h-10 font-extrabold text-5xl">
+						Memory Heroes
+					</h1>
+				</div>
+				<div className="gap-4 mr-6 text-2xl flex font-Bebas">
+					<p>
+						Score: <span className="text-red-600"> {score} </span>
+					</p>
+					<p>
+						Max Score: <span className="text-red-600">{maxScore} </span>
+					</p>
 				</div>
 			</div>
 			<div className="grid grid-cols-6 gap-4 ml-5 mr-5">

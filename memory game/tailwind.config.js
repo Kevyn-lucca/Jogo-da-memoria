@@ -2,8 +2,12 @@
 export default {
 	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
 	theme: {
-		extend: {},
+		extend: {
+			fontFamily: {
+				Bebas: ["BebasNeue-Regular", "system-ui", "sans-serif"],
+			},
+		},
+		// eslint-disable-next-line no-undef
+		plugins: [require("@tailwindcss/typography")],
 	},
-	// eslint-disable-next-line no-undef
-	plugins: [require("@tailwindcss/typography")],
 };
