@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Item from "./ItemComponent";
-import PropTypes from "prop-types";
 import "./index.css";
 
 class CardObject {
@@ -15,7 +14,7 @@ class CardObject {
 	}
 }
 
-function GetData({ difficulty }) {
+function GetData() {
 	const [objectArray, setObjectArray] = useState([]);
 	const [score, setScore] = useState(0);
 	const [maxScore, setMaxScore] = useState(0);
@@ -24,7 +23,7 @@ function GetData({ difficulty }) {
 
 	async function fetchData() {
 		const response = await fetch(
-			`http://gateway.marvel.com/v1/public/characters?limit=${difficulty}&offset=${Math.floor(
+			`http://gateway.marvel.com/v1/public/characters?limit=30&offset=${Math.floor(
 				Math.random() * 2000
 			)}&ts=1719369308228&apikey=7b8afad76ccf71f95807ed5d89e2a407&hash=a73f86b0a70c03174f7b04429000f26c`
 		);
@@ -49,7 +48,7 @@ function GetData({ difficulty }) {
 
 	useEffect(() => {
 		fetchData();
-	});
+	}, []);
 
 	const ResetGame = () => {
 		setScore(0);
@@ -85,13 +84,9 @@ function GetData({ difficulty }) {
 			setShuffling(false);
 		}, 500);
 	};
-
-	GetData.propTypes = {
-		difficulty: PropTypes.string.isRequired,
-	};
 	return (
 		<>
-			<div className="flex justify-between items-center border-b-4 border-black bg-gradient-to-r  from-sky-500 to-indigo-500 mb-4">
+			<div className="flex justify-between items-center border-b-4 shadow-lg border-black bg-gradient-to-r  from-sky-500 to-indigo-500 mb-4">
 				<button
 					className="ml-4 text-2xl active:brightness-200 bg-neutral-900 font-Bebas text-white p-1 rounded-md"
 					onClick={ResetGame}

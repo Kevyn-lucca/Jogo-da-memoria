@@ -5,6 +5,6 @@ import GetData from "./CreateItem";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
-		<GetData />
+		<GetData difficulty={"35"} />
 	</React.StrictMode>
 );
